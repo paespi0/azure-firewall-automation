@@ -1,0 +1,13 @@
+resource "azurerm_firewall" "example" {
+  name                = "firewall-${var.environment}"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
+  sku_name            = "AZFW_VNet" # This should be set to the appropriate SKU for your use case.
+  sku_tier            = "Standard"  # Choose between "Standard" and "Premium" based on your needs.
+
+  ip_configuration {
+    name                 = "configuration"
+    subnet_id            = var.subnet_id
+    public_ip_address_id = azurerm_public_ip.example.id
+  }
+}
