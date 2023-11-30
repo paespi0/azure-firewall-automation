@@ -1,7 +1,7 @@
 resource "azurerm_firewall_network_rule_collection" "example_network_rules" {
   name                = "exampleNetworkRules"
-  azure_firewall_name = azurerm_firewall.example.name
-  resource_group_name = azurerm_resource_group.example.name
+  azure_firewall_name = azurerm_firewall.example_firewall.name
+  resource_group_name = var.resource_group_name
   priority            = 100
   action              = "Allow"
 
@@ -18,8 +18,8 @@ resource "azurerm_firewall_network_rule_collection" "example_network_rules" {
 
 resource "azurerm_firewall_application_rule_collection" "example_app_rules" {
   name                = "exampleAppRules"
-  azure_firewall_name = azurerm_firewall.example.name
-  resource_group_name = azurerm_resource_group.example.name
+  azure_firewall_name = azurerm_firewall.example_firewall.name
+  resource_group_name = var.resource_group_name
   priority            = 200
   action              = "Allow"
 
