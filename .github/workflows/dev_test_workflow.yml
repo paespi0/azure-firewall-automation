@@ -14,15 +14,13 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-      with:
-        ref: ${{ github.head_ref }} # This ensures the correct branch is checked out
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
     - name: Terraform Init
       run: terraform init
-      working-directory: .
+      working-directory: ./terraform  # Specify the subdirectory here
 
     - name: Terraform Plan
       run: |
@@ -31,7 +29,7 @@ jobs:
         elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
           terraform plan -var-file="test.tfvars"
         fi
-      working-directory: .
+      working-directory: ./terraform  # Specify the subdirectory here
 
     - name: Terraform Apply
       run: |
@@ -40,4 +38,4 @@ jobs:
         elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
           terraform apply -auto-approve -var-file="test.tfvars"
         fi
-      working-directory: .
+      working-directory: ./terraform  # Specify the subdirectory here
