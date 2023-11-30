@@ -1,9 +1,9 @@
 name: Deploy Azure Firewall - DEV
 
 on:
-  push:
-    branches:
-      - test
+  # push:
+  #   branches:
+  #     - test
   workflow_dispatch:
 
 jobs:

@@ -2,11 +2,11 @@ name: Terraform Deployment
 
 # Triggers the workflow on push to any branch or on manual trigger (workflow_dispatch)
 on:
-  push:
-    branches:
-      - dev
-      - test
-      - prod
+  # push:
+  #   branches:
+  #     - dev
+  #     - test
+  #     - prod
   workflow_dispatch:
 
 jobs:

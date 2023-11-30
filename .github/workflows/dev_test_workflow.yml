@@ -1,0 +1,28 @@
+name: Terraform Deployment for DEV and TEST
+
+on:
+  push:
+    branches:
+      - dev
+      - test
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      run: terraform init
+      working-directory: .
+
+    - name: Terraform Plan
+      run: terraform plan -var-file="${{ github.ref == 'refs/heads/dev' && 'dev.tfvars' || 'test.tfvars' }}"
+      working-directory: .
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -var-file="${{ github.ref == 'refs/heads/dev' && 'dev.tfvars' || 'test.tfvars' }}"
+      working-directory: .
