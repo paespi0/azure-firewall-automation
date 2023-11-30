@@ -5,12 +5,17 @@ on:
     branches:
       - dev
       - test
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.head_ref }} # This ensures the correct branch is checked out
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
@@ -20,9 +25,19 @@ jobs:
       working-directory: .
 
     - name: Terraform Plan
-      run: terraform plan -var-file="${{ github.ref == 'refs/heads/dev' && 'dev.tfvars' || 'test.tfvars' }}"
+      run: |
+        if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+          terraform plan -var-file="dev.tfvars"
+        elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
+          terraform plan -var-file="test.tfvars"
+        fi
       working-directory: .
 
     - name: Terraform Apply
-      run: terraform apply -auto-approve -var-file="${{ github.ref == 'refs/heads/dev' && 'dev.tfvars' || 'test.tfvars' }}"
+      run: |
+        if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+          terraform apply -auto-approve -var-file="dev.tfvars"
+        elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
+          terraform apply -auto-approve -var-file="test.tfvars"
+        fi
       working-directory: .
