@@ -1,5 +1,5 @@
 resource "azurerm_firewall" "example_firewall" {
-  name                = "exampleFirewall"
+  name                = "exampleFirewallProd"
   location            = var.location
   resource_group_name = var.resource_group_name
   sku_name            = "AZFW_VNet" # This should be set to the appropriate SKU for your use case.
