@@ -13,7 +13,7 @@ resource "azurerm_firewall" "example_firewall" {
 }
 
 resource "azurerm_public_ip" "example" {
-  name                = "examplePublicIp"
+  name                = "examplePublicIpProd"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
