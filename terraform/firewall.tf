@@ -1,5 +1,5 @@
 resource "azurerm_firewall" "example_firewall" {
-  name                = "exampleFirewallProd"
+  name                = "exampleFirewall"
   location            = var.location
   resource_group_name = var.resource_group_name
   sku_name            = "AZFW_VNet" # This should be set to the appropriate SKU for your use case.
@@ -13,7 +13,7 @@ resource "azurerm_firewall" "example_firewall" {
 }
 
 resource "azurerm_public_ip" "example" {
-  name                = "examplePublicIpProd"
+  name                = "examplePublicIp"
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
