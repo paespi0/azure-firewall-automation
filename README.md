@@ -45,11 +45,3 @@ To deploy through GitHub Actions:
 
 1. Push your changes to the respective environment branch (dev, test, prod).
 2. Monitor the Actions tab in GitHub to view the workflow execution.
-
-## Contributing
-
-Contributions to this project are welcome. Please ensure to update tests as appropriate.
-
-## License
-
-[MIT](LICENSE)
