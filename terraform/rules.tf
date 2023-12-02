@@ -14,13 +14,13 @@ resource "azurerm_firewall_network_rule_collection" "example_network_rules" {
   }
 
   # Add more rules as needed
-  rule {
-    name = "allow-ssh"
-    source_addresses = ["10.0.0.0/16"]
-    destination_ports = ["22"]
-    destination_addresses = ["*"]
-    protocols = ["TCP"]
-  }
+  # rule {
+  #   name = "allow-ssh"
+  #   source_addresses = ["10.0.0.0/16"]
+  #   destination_ports = ["22"]
+  #   destination_addresses = ["*"]
+  #   protocols = ["TCP"]
+  # }
 
 }
 
