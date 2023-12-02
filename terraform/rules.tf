@@ -7,7 +7,7 @@ resource "azurerm_firewall_network_rule_collection" "example_network_rules" {
 
   rule {
     name = "allow-http"
-    source_addresses = ["10.0.0.0/24"]
+    source_addresses = ["10.0.0.0/16"]
     destination_ports = ["80", "443"]
     destination_addresses = ["*"]
     protocols = ["TCP"]
