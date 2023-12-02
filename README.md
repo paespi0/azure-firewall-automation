@@ -32,3 +32,24 @@ This project automates the deployment of Azure Firewall rules across multiple en
 To run Terraform commands locally:
 
 1. Initialize Terraform:
+terraform init
+
+2. Create a plan:
+terraform plan
+
+3. Apply the configuration:
+terraform apply
+
+
+To deploy through GitHub Actions:
+
+1. Push your changes to the respective environment branch (dev, test, prod).
+2. Monitor the Actions tab in GitHub to view the workflow execution.
+
+## Contributing
+
+Contributions to this project are welcome. Please ensure to update tests as appropriate.
+
+## License
+
+[MIT](LICENSE)
