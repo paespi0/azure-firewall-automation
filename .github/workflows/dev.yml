@@ -1,0 +1,28 @@
+name: Deploy Azure Firewall - DEV
+
+on:
+  # push:
+  #   branches:
+  #     - dev
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ./terraform
+
+    - name: Terraform Plan
+      run: terraform plan -var-file="dev.tfvars" -out=tfplan
+      working-directory: ./terraform
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve tfplan
+      working-directory: ./terraform

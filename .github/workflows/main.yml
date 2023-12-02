@@ -1,10 +1,12 @@
-name: Deploy Azure Firewall
+name: Terraform Deployment
 
-# Triggers the workflow on push or workflow_dispatch (manual trigger)
+# Triggers the workflow on push to any branch or on manual trigger (workflow_dispatch)
 on:
-  push:
-    paths:
-      - 'terraform/**'
+  # push:
+  #   branches:
+  #     - dev
+  #     - test
+  #     - prod
   workflow_dispatch:
 
 jobs:
@@ -17,12 +19,30 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
-    - name: Terraform Initialize
+    - name: Determine Environment
+      id: set-env
+      run: |
+        if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+          echo "Setting environment to dev"
+          echo "::set-output name=env_name::dev"
+        elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
+          echo "Setting environment to test"
+          echo "::set-output name=env_name::test"
+        elif [ "${{ github.ref }}" == "refs/heads/prod" ]; then
+          echo "Setting environment to prod"
+          echo "::set-output name=env_name::prod"
+        fi
+
+    - name: Terraform Init
       run: terraform init
       working-directory: ./terraform
 
+    - name: Terraform Workspace
+      run: terraform workspace new ${{ steps.set-env.outputs.env_name }} || terraform workspace select ${{ steps.set-env.outputs.env_name }}
+      working-directory: ./terraform
+
     - name: Terraform Plan
-      run: terraform plan -out=tfplan
+      run: terraform plan -var-file="${{ steps.set-env.outputs.env_name }}.tfvars" -out=tfplan
       working-directory: ./terraform
 
     - name: Terraform Apply
