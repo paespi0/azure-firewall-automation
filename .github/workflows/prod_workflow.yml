@@ -6,6 +6,9 @@ on:
       - prod
   workflow_dispatch:
 
+env:
+  TF_VAR_subnet_id: ${{ secrets.AZURE_SUBNET_ID_PROD }}
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
