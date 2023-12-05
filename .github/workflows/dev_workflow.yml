@@ -1,49 +1,60 @@
-name: "Deploy Azure Firewall Policy to Dev"
+name: "Deploy Azure Firewall Policy"
 
 on:
   push:
     branches:
       - dev
-    paths:
-      - 'terraform/**'
+      - test
+  workflow_dispatch:
+
+env:
+  TF_VAR_subnet_id: ${{ secrets.AZURE_SUBNET_ID_TEST }}
+
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: dev
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout Code
+      uses: actions/checkout@v2
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
     - name: Terraform Init
       run: terraform init
-      working-directory: ./terraform
+      working-directory: ./terraform  # Specify the subdirectory here
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
     - name: Terraform Plan
-      run: terraform plan -var-file="dev.tfvars" -out=tfplan
-      working-directory: ./terraform
+      run: |
+        if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+          terraform plan -var-file="dev.tfvars"
+        elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
+          terraform plan -var-file="test.tfvars"
+        fi
+      working-directory: ./terraform  # Specify the subdirectory here
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-        TF_VAR_subnet_id: ${{ secrets.AZURE_SUBNET_ID_DEV }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
     - name: Terraform Apply
-      run: terraform apply -auto-approve tfplan
-      working-directory: ./terraform
+      run: |
+        if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+          terraform apply -auto-approve -var-file="dev.tfvars"
+        elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
+          terraform apply -auto-approve -var-file="test.tfvars"
+        fi
+      working-directory: ./terraform  # Specify the subdirectory here
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
         ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-        TF_VAR_subnet_id: ${{ secrets.AZURE_SUBNET_ID_DEV }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
