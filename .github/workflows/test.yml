@@ -1,9 +1,8 @@
-name: Terraform Deployment for DEV and TEST
+name: "Deploy Azure Firewall Policy (Test)"
 
 on:
   push:
     branches:
-      - dev
       - test
   workflow_dispatch:
 
