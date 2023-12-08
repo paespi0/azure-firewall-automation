@@ -1,0 +1,63 @@
+name: "Deploy Azure Firewall Policy (Dev)"
+
+# Trigger the workflow on push events to the main branch and paths that include Terraform files
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+env:
+  TF_VAR_subnet_id: ${{ secrets.AZURE_SUBNET_ID_DEV }}
+    
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Check out the repository code
+    - uses: actions/checkout@v2
+
+    # Setup Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    # Initialize Terraform
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ./terraform
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+    
+      # Create Terraform plan
+    - name: Terraform Plan
+      run: |
+        if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+          terraform plan -var-file="dev.tfvars"
+        elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
+          terraform plan -var-file="test.tfvars"
+        fi
+      working-directory: ./terraform  # Specify the subdirectory here
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+    # Apply Terraform plan
+    - name: Terraform Apply
+      run: |
+        if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
+          terraform apply -auto-approve -var-file="dev.tfvars"
+        elif [ "${{ github.ref }}" == "refs/heads/test" ]; then
+          terraform apply -auto-approve -var-file="test.tfvars"
+        fi
+      working-directory: ./terraform  # Specify the subdirectory here
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
