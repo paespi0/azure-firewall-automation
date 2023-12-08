@@ -1,4 +1,4 @@
-name: Terraform Deployment for PROD
+name: "Deploy Azure Firewall Policy (PROD)"
 
 on:
   push:
