@@ -1,28 +1,50 @@
-name: Deploy Azure Firewall - DEV
+name: "Deploy Azure Firewall Policy (PROD)"
 
 on:
-  # push:
-  #   branches:
-  #     - prod
+  push:
+    branches:
+      - prod
   workflow_dispatch:
 
+env:
+  TF_VAR_subnet_id: ${{ secrets.AZURE_SUBNET_ID_PROD }}
+
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment: prod   # Add this line to specify the environment
+
     steps:
-    - uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v2
+  
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+  
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform  # Specify the subdirectory here
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      - name: Terraform Plan
+        run: terraform plan -var-file="prod.tfvars"
+        working-directory: ./terraform  # Specify the subdirectory here
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
-    - name: Terraform Init
-      run: terraform init
-      working-directory: ./terraform
-
-    - name: Terraform Plan
-      run: terraform plan -var-file="prod.tfvars" -out=tfplan
-      working-directory: ./terraform
-
-    - name: Terraform Apply
-      run: terraform apply -auto-approve tfplan
-      working-directory: ./terraform
+      # The apply step will execute after manual approval if the environment has required reviewers.
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var-file="prod.tfvars"
+        working-directory: ./terraform  # Specify the subdirectory here
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
