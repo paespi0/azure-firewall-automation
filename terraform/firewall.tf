@@ -50,6 +50,19 @@ resource "azurerm_firewall_policy_rule_collection_group" "example_policy_rule" {
       }
     }
     // Additional rules as needed
+        rule {
+      name = "PedroRule"
+      source_addresses  = ["*"]
+      destination_fqdns = ["www.pedro.com"]
+      protocols {
+        port = 80
+        type = "Http"
+      }
+      protocols {
+        port = 443
+        type = "Https"
+      }
+    }
   }
   // Network rule collections and NAT rule collections can be added as needed
     network_rule_collection {
