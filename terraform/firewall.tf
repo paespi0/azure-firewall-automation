@@ -51,9 +51,23 @@ resource "azurerm_firewall_policy_rule_collection_group" "example_policy_rule" {
     }
     // Additional rules as needed
         rule {
-      name = "PedroRule"
+      name = "ChipRule"
       source_addresses  = ["*"]
-      destination_fqdns = ["www.pedro.com"]
+      destination_fqdns = ["www.chip.com"]
+      protocols {
+        port = 80
+        type = "Http"
+      }
+      protocols {
+        port = 443
+        type = "Https"
+      }
+    }
+
+    rule {
+      name = "MarekRule"
+      source_addresses  = ["*"]
+      destination_fqdns = ["www.marek.com"]
       protocols {
         port = 80
         type = "Http"
